@@ -1,0 +1,9 @@
+{
+  "name": "BlockSmash.Gameplay",
+  "references": [
+    "Unity.TextMeshPro",
+    "UniTask",
+    "MessagePipe",
+    "VContainer"
+  ]
+}

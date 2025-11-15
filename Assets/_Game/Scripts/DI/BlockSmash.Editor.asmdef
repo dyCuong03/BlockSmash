@@ -1,0 +1,17 @@
+{
+    "name": "BlockSmash.DI",
+    "rootNamespace": "BlockSmash.DI",
+    "references": [
+        "VContainer",
+        "BlockSmash.Gameplay"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
