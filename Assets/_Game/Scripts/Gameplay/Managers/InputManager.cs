@@ -35,7 +35,7 @@
             if (interactable is null) return;
 
             this.selected = interactable;
-            this.selected.OnBeginDrag();
+            this.selected.OnBeginDrag(this.mouseDownPosition);
         }
 
         private void MouseDrag()

@@ -4,9 +4,9 @@
 
     public interface IInteractable
     {
-        void OnBeginDrag();
+        void OnBeginDrag(Vector3 mousePosition);
         
-        void OnDrag(Vector2 mousePosition);
+        void OnDrag(Vector3 mousePosition);
         
         void OnEndDrag();
     }
