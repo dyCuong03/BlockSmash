@@ -18,6 +18,16 @@ namespace BlockSmash.Pooling
 
         public GameObject Spawn(GameObject prefab, Vector3? position = null, Quaternion? rotation = null, Transform? parent = null, bool spawnInWorldSpace = true);
 
+        public T Spawn<T>(
+            T           prefab,
+            Vector3?    position          = null,
+            Quaternion? rotation          = null,
+            Transform?  parent            = null,
+            bool        spawnInWorldSpace = true
+        ) where T : Component;
+
+        public void Recycle<T>(T instance) where T : Component;
+
         public void Recycle(GameObject instance);
 
         public void RecycleAll(GameObject prefab);

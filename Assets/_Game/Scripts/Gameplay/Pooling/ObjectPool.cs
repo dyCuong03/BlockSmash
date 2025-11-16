@@ -62,23 +62,13 @@ namespace BlockSmash.Pooling
             this.Spawned?.Invoke(instance);
             return instance;
         }
-
-        public T Spawn<T>(Vector3? position = null, Quaternion? rotation = null, Transform? parent = null, bool spawnInWorldSpace = true)
-        {
-            return this.Spawn(position, rotation, parent, spawnInWorldSpace).GetComponentOrThrow<T>();
-        }
-
+        
         public void Recycle(GameObject instance)
         {
             if (!this.spawnedObjects.Remove(instance)) throw new InvalidOperationException($"{instance.name} was not spawned from {this.name}");
             instance.transform.SetParent(this.transform, false);
             this.pooledObjects.Enqueue(instance);
             this.Recycled?.Invoke(instance);
-        }
-
-        public void Recycle<T>(T instance) where T : Component
-        {
-            this.Recycle(instance.gameObject);
         }
 
         public void RecycleAll()

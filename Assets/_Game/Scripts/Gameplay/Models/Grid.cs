@@ -1,7 +1,37 @@
 namespace BlockSmash.Models
 {
+    using System;
     using System.Collections.Generic;
+    using System.Linq;
     using UnityEngine;
+    
+    [Serializable]
+    public struct GridCell
+    {
+        public Vector2Int position;
+        public CellState  state;
+        public int        colorId;
+        
+        public GridCell(Vector2Int position)
+        {
+            this.position = position;
+            this.state    = CellState.Empty;
+            this.colorId  = -1;
+        }
+        
+        public GridCell(int x, int y) : this(new Vector2Int(x, y))
+        {
+        }
+
+        public bool IsEmpty    => this.state == CellState.Empty;
+        public bool IsOccupied => this.state == CellState.Occupied;
+    }
+
+    public enum CellState
+    {
+        Empty    = 0,
+        Occupied = 1,
+    }
 
     public class Grid
     {
@@ -11,74 +41,72 @@ namespace BlockSmash.Models
 
         public Grid(int width, int height)
         {
-            Width = width;
-            Height = height;
-            Cells = new GridCell[width, height];
+            this.Width  = width;
+            this.Height = height;
+            this.Cells     = new GridCell[width, height];
             
-            for (int x = 0; x < width; x++)
+            for (var x = 0; x < width; x++)
             {
-                for (int y = 0; y < height; y++)
+                for (var y = 0; y < height; y++)
                 {
-                    Cells[x, y] = new GridCell(x, y);
+                    this.Cells[x, y] = new GridCell(x, y);
                 }
             }
         }
 
         public bool IsValidPosition(Vector2Int position)
         {
-            return position.x >= 0 && position.x < Width && 
-                   position.y >= 0 && position.y < Height;
+            return position.x >= 0 && position.x < this.Width && 
+                   position.y >= 0 && position.y < this.Height;
         }
 
-        public bool CanPlaceShape(Shape shape, Vector2Int position)
+        public bool CanPlaceShape(ShapeModel shape, Vector2Int position)
         {
-            foreach (var block in shape.Blocks)
+            foreach (var blockPos in shape.Blocks.Select(block => block.Position + position))
             {
-                Vector2Int blockPos = block.Position + position;
-                
-                if (!IsValidPosition(blockPos))
+                if (!this.IsValidPosition(blockPos))
                     return false;
                 
-                if (Cells[blockPos.x, blockPos.y].IsOccupied)
+                if (this.Cells[blockPos.x, blockPos.y].IsOccupied)
                     return false;
             }
-            
+
             return true;
         }
 
-        public void PlaceShape(Shape shape, Vector2Int position)
+        public void PlaceShape(ShapeModel shape, Vector2Int position)
         {
             foreach (var block in shape.Blocks)
             {
-                Vector2Int blockPos = block.Position + position;
+                var blockPos = block.Position + position;
                 
-                if (IsValidPosition(blockPos))
+                if (this.IsValidPosition(blockPos))
                 {
-                    Cells[blockPos.x, blockPos.y].State = CellState.Occupied;
-                    Cells[blockPos.x, blockPos.y].ColorId = block.ColorId;
+                    this.Cells[blockPos.x, blockPos.y].state = CellState.Occupied;
+                    this.Cells[blockPos.x, blockPos.y].colorId  = block.ColorId;
                 }
             }
         }
 
         public void ClearCell(int x, int y)
         {
-            if (IsValidPosition(new Vector2Int(x, y)))
+            if (this.IsValidPosition(new (x, y)))
             {
-                Cells[x, y].State = CellState.Empty;
-                Cells[x, y].ColorId = -1;
+                this.Cells[x, y].state = CellState.Empty;
+                this.Cells[x, y].colorId  = -1;
             }
         }
 
         public List<int> GetFullRows()
         {
-            List<int> fullRows = new List<int>();
+            var fullRows = new List<int>();
             
-            for (int y = 0; y < Height; y++)
+            for (var y = 0; y < this.Height; y++)
             {
-                bool isFull = true;
-                for (int x = 0; x < Width; x++)
+                var isFull = true;
+                for (var x = 0; x < this.Width; x++)
                 {
-                    if (Cells[x, y].IsEmpty)
+                    if (this.Cells[x, y].IsEmpty)
                     {
                         isFull = false;
                         break;
@@ -94,14 +122,14 @@ namespace BlockSmash.Models
 
         public List<int> GetFullColumns()
         {
-            List<int> fullColumns = new List<int>();
+            var fullColumns = new List<int>();
             
-            for (int x = 0; x < Width; x++)
+            for (var x = 0; x < this.Width; x++)
             {
-                bool isFull = true;
-                for (int y = 0; y < Height; y++)
+                var isFull = true;
+                for (var y = 0; y < this.Height; y++)
                 {
-                    if (Cells[x, y].IsEmpty)
+                    if (this.Cells[x, y].IsEmpty)
                     {
                         isFull = false;
                         break;
@@ -117,17 +145,17 @@ namespace BlockSmash.Models
 
         public void ClearRow(int row)
         {
-            for (int x = 0; x < Width; x++)
+            for (var x = 0; x < this.Width; x++)
             {
-                ClearCell(x, row);
+                this.ClearCell(x, row);
             }
         }
 
         public void ClearColumn(int column)
         {
-            for (int y = 0; y < Height; y++)
+            for (var y = 0; y < this.Height; y++)
             {
-                ClearCell(column, y);
+                this.ClearCell(column, y);
             }
         }
     }

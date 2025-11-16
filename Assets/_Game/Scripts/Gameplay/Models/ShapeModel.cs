@@ -3,21 +3,21 @@ namespace BlockSmash.Models
     using System.Collections.Generic;
     using UnityEngine;
 
-    public class Shape
+    public class ShapeModel
     {
         public int ShapeId { get; private set; }
-        public List<Block> Blocks { get; private set; }
+        public List<BlockModel> Blocks { get; private set; }
         public Vector2Int Pivot { get; private set; }
 
-        public Shape(ShapeData shapeData, int colorId = 0)
+        public ShapeModel(ShapeData shapeData, int colorId = 0)
         {
             this.ShapeId = shapeData.shapeId;
-            this.Blocks  = new List<Block>();
+            this.Blocks  = new List<BlockModel>();
             this.Pivot   = CalculatePivot(shapeData.cells);
 
             foreach (var cellPosition in shapeData.cells)
             {
-                var block = new Block(cellPosition, colorId);
+                var block = new BlockModel(cellPosition, colorId);
                 this.Blocks.Add(block);
             }
         }

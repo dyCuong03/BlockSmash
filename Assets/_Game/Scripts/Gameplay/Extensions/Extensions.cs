@@ -7,6 +7,16 @@
 
     public static class Extensions
     {
+        public static Vector3 ToVector3(this Vector2Int v, float z = 0f)
+        {
+            return new Vector3(v.x, v.y, z);
+        }
+        
+        public static Vector3 WithZ(this Vector3 vector, float z)
+        {
+            vector.z = z;
+            return vector;
+        }
         public static T DequeueOrDefault<T>(this Queue<T> queue, Func<T> valueFactory)
         {
             return queue.Count > 0 ? queue.Dequeue() : valueFactory();

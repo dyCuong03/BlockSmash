@@ -17,3 +17,4 @@ namespace BlockSmash.Models
         public Vector2Int[] cells;
     }
 }
+

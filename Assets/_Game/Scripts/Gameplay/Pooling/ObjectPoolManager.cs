@@ -41,6 +41,30 @@ namespace BlockSmash.Pooling
 
         void IObjectPoolManager.Unload(GameObject prefab) => this.Unload(prefab);
 
+        T IObjectPoolManager.Spawn<T>(
+            T           prefab,
+            Vector3?    position,
+            Quaternion? rotation,
+            Transform?  parent,
+            bool        spawnInWorldSpace
+        )
+        {
+            var go = this.Spawn(
+                prefab.gameObject,
+                position,
+                rotation,
+                parent,
+                spawnInWorldSpace
+            );
+
+            return go.GetComponentOrThrow<T>();
+        }
+
+        void IObjectPoolManager.Recycle<T>(T instance)
+        {
+            ((IObjectPoolManager)this).Recycle(instance.gameObject);
+        }
+
         #endregion
 
         #region Private

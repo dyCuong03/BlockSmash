@@ -1,5 +1,6 @@
 ﻿namespace BlockSmash.DI
 {
+    using BlockSmash.Managers;
     using BlockSmash.Pooling;
     using VContainer;
 
@@ -9,6 +10,7 @@
         {
             if (builder.Exists(typeof(IObjectPoolManager), true)) return;
             builder.Register<ObjectPoolManager>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<EntityManager>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
         }
     }
 }
