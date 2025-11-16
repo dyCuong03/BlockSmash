@@ -48,3 +48,5 @@ MonoBehaviour:
     TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
+  jsonFile: {fileID: 4900000, guid: 54b9de9afcbe47049ff510b5fe51422f, type: 3}
+  levelPrefab: {fileID: 4843310334449332234, guid: 257478e43e39df84b9fd5ffdcd6c080d, type: 3}

@@ -1,13 +1,15 @@
 ﻿namespace BlockSmash.Entities
 {
     using System.Collections.Generic;
+    using System.Linq;
     using BlockSmash.Extensions;
     using BlockSmash.Pooling;
+    using BlockSmash.Services;
     using UnityEngine;
     using VContainer;
     using Grid = BlockSmash.Models.Grid;
 
-    public class Level : MonoBehaviour
+    public class Level : Entities
     {
         [SerializeField] private int        gridWidth  = 8;
         [SerializeField] private int        gridHeight = 8;
@@ -22,13 +24,13 @@
         private List<Cell>       cells  = new();
 
         private IObjectPoolManager objectPoolManager;
+        private ShapeService       shapeService;
+        private ShapeService       ShapeService      => this.shapeService ??= this.GetCurrentContainer().Resolve<ShapeService>();
+        private IObjectPoolManager ObjectPoolManager => this.objectPoolManager ??= this.GetCurrentContainer().Resolve<IObjectPoolManager>();
+        
+        public Grid Grid => this.grid;
 
-        private void Awake()
-        {
-            this.objectPoolManager = this.GetCurrentContainer().Resolve<IObjectPoolManager>();
-        }
-
-        private void Start()
+        protected override void OnSpawned()
         {
             this.InitializeGrid();
             this.GenerateSlots();
@@ -37,10 +39,10 @@
 
         private void InitializeGrid()
         {
-            this.grid = new Grid(this.gridWidth, this.gridHeight);
+            this.grid = new(this.gridWidth, this.gridHeight);
 
             const float SPACING_X = 1.18f;
-            const float SPACING_Y  = 1.18f;
+            const float SPACING_Y = 1.18f;
 
             var totalWidth  = (this.gridWidth - 1) * SPACING_X;
             var totalHeight = (this.gridHeight - 1) * SPACING_Y;
@@ -53,14 +55,14 @@
 
                 var centeredPos = cellPos - offset;
 
-                this.cells.Add(
-                    this.objectPoolManager.Spawn(
-                        this.cellPrefab,
-                        position: centeredPos,
-                        parent: this.cellRoot.transform,
-                        spawnInWorldSpace: false
-                    )
-                );
+                var cellObj = this.ObjectPoolManager.Spawn(
+                    this.cellPrefab,
+                    position: centeredPos,
+                    parent: this.cellRoot.transform,
+                    spawnInWorldSpace: false);
+
+                this.cells.Add(cellObj);
+                cellObj.BindData(cell);
             }
         }
 
@@ -90,9 +92,15 @@
 
         private void GenerateShape()
         {
-            foreach (var slot in this.slots)
+            foreach (var shp in this.slots.Select(slot =>
+                this.ObjectPoolManager.Spawn(this.shapePrefab,
+                    Vector3.zero,
+                    Quaternion.identity,
+                    slot.transform,
+                    spawnInWorldSpace: false)))
             {
-                this.shapes.Add(this.objectPoolManager.Spawn(this.shapePrefab, Vector3.zero, Quaternion.identity, slot.transform, spawnInWorldSpace: false));
+                this.shapes.Add(shp);
+                shp.BindData(this.ShapeService.GetShapeModel());
             }
         }
     }

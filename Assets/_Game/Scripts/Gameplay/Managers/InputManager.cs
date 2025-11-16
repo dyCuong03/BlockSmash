@@ -41,7 +41,8 @@
         private void MouseDrag()
         {
             if (this.selected is null) return;
-            var mousePosition                                                                             = this.GetMousePosition();
+            var mousePosition = this.GetMousePosition();
+
             if (Vector3.Distance(mousePosition, this.mouseDownPosition) > DRAG_THRESHOLD) this.isDragging = true;
             if (!this.isDragging) return;
             this.selected.OnDrag(this.GetMousePosition());
@@ -79,8 +80,9 @@
 
         private T? Raycast2DAtMousePosition<T>()
         {
-            var ray = this.camera.ScreenPointToRay(Input.mousePosition);
-            return Physics2D.RaycastAll(ray.origin, ray.direction, this.camera.farClipPlane)
+            var layerMask = 1 << LayerMask.NameToLayer(nameof(InputManager));
+            var ray       = this.camera.ScreenPointToRay(Input.mousePosition);
+            return Physics2D.RaycastAll(ray.origin, ray.direction, this.camera.farClipPlane, layerMask)
                 .Select(hit => hit.rigidbody ? hit.rigidbody.GetComponentInParent<T>() : default)
                 .FirstOrDefault(hit => hit is { });
         }

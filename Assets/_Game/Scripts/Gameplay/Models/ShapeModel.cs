@@ -5,19 +5,21 @@ namespace BlockSmash.Models
 
     public class ShapeModel
     {
-        public int ShapeId { get; private set; }
-        public List<BlockModel> Blocks { get; private set; }
-        public Vector2Int Pivot { get; private set; }
+        public int              ShapeId { get; private set; }
+        public List<BlockModel> Blocks  { get; private set; }
+        public Vector2Int       Pivot   { get; private set; }
+        public int              ColorId { get; private set; }
 
-        public ShapeModel(ShapeData shapeData, int colorId = 0)
+        public ShapeModel(ShapeData shapeData, int color = -1)
         {
             this.ShapeId = shapeData.shapeId;
-            this.Blocks  = new List<BlockModel>();
+            this.Blocks  = new();
             this.Pivot   = CalculatePivot(shapeData.cells);
+            this.ColorId = color;
 
             foreach (var cellPosition in shapeData.cells)
             {
-                var block = new BlockModel(cellPosition, colorId);
+                var block = new BlockModel(cellPosition, color);
                 this.Blocks.Add(block);
             }
         }
@@ -41,7 +43,7 @@ namespace BlockSmash.Models
         public void SetPosition(Vector2Int position)
         {
             var offset = position - this.Pivot;
-            
+
             foreach (var block in this.Blocks)
             {
                 block.Position += offset;
