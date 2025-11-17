@@ -4,7 +4,9 @@
     "references": [
         "VContainer",
         "BlockSmash.DI",
-        "BlockSmash.Gameplay"
+        "BlockSmash.Gameplay",
+        "MessagePipe",
+        "MessagePipe.VContainer"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using BlockSmash.Models;
     using UnityEngine;
-
+    
     public class Block : Entities
     {
         [SerializeField] private SpriteRenderer blockView;
@@ -17,6 +17,8 @@
         public Cell CurrentCell => this.overlappingCells.Count > 0 ? this.GetNearestCell() : null!;
 
         public bool CanCollect => this.CurrentCell != null;
+        
+        public bool IsComplete {get; private set;} = false;
 
         public void BindData(Shape shape, BlockModel data)
         {
@@ -62,14 +64,16 @@
             return nearest;
         }
 
-        protected override void OnSpawned()
+        protected override void OnRecycled()
         {
+            this.IsComplete = false;
             this.overlappingCells.Clear();
         }
 
-        protected override void OnRecycled()
+        public void OnRemoved()
         {
-            this.overlappingCells.Clear();
+            this.IsComplete = true;
+            this.gameObject.SetActive(false);
         }
     }
 }

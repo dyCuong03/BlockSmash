@@ -10,7 +10,7 @@
 
         public static IObjectResolver GetCurrentContainer(this object _)
         {
-            if (CurrentSceneContext == null) CurrentSceneContext = Object.FindObjectOfType<LifetimeScope>();
+            if (CurrentSceneContext == null) CurrentSceneContext = Object.FindFirstObjectByType<LifetimeScope>();
             return CurrentSceneContext.Container;
         }
     }

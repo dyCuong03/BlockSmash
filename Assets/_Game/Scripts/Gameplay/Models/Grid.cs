@@ -45,8 +45,18 @@ namespace BlockSmash.Models
                 }
             }
         }
+        
+        public bool CanPlaceShape(List<Vector2Int> shapePositions)
+        {
+            foreach (var pos in shapePositions)
+            {
+                if (!this.IsValidPosition(pos) || this.Cells[pos.x, pos.y].IsOccupied)
+                    return false;
+            }
+            return true;
+        }
 
-        public bool IsValidPosition(Vector2Int position)
+        private bool IsValidPosition(Vector2Int position)
         {
             return position.x >= 0 && position.x < this.Width && position.y >= 0 && position.y < this.Height;
         }
@@ -71,18 +81,41 @@ namespace BlockSmash.Models
 
             return true;
         }
-
-        public void PlaceShape(List<Vector2Int> positions, int colorId = 0)
+        
+        public List<GridCell> RemoveFullLines()
         {
-            foreach (var position in positions)
-            {
-                if (!this.IsValidPosition(position))
-                    throw new InvalidOperationException($"Invalid position {position} for placing shape.");
+            var removedCells = new List<GridCell>();
 
-                var cell = this.Cells[position.x, position.y];
-                cell.colorId                  = colorId;
-                this.Cells[position.x, position.y] = cell;
+            var fullRows = this.GetFullRows();
+            var fullCols = this.GetFullColumns();
+
+            foreach (var y in fullRows)
+            {
+                for (var x = 0; x < this.Width; x++)
+                {
+                    if (this.Cells[x, y].IsOccupied)
+                        removedCells.Add(this.Cells[x, y]);
+
+                    var cell = this.Cells[x, y];
+                    cell.colorId  = -1;
+                    this.Cells[x, y] = cell;
+                }
             }
+
+            foreach (var x in fullCols)
+            {
+                for (var y = 0; y < this.Height; y++)
+                {
+                    if (this.Cells[x, y].IsOccupied)
+                        removedCells.Add(this.Cells[x, y]);
+
+                    var cell = this.Cells[x, y];
+                    cell.colorId  = -1;
+                    this.Cells[x, y] = cell;
+                }
+            }
+
+            return removedCells;
         }
 
         public List<int> GetFullRows()

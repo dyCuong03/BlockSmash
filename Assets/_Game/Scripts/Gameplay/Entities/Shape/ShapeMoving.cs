@@ -1,9 +1,10 @@
 ﻿namespace BlockSmash.Entities
 {
+    using System.Linq;
     using _Game.Scripts.Gameplay.Utils;
     using BlockSmash.Implements;
     using UnityEngine;
-
+    
     public class ShapeMoving : MonoBehaviour, IInteractable
     {
         [SerializeField] private float moveSpeed = 20f;
@@ -28,7 +29,7 @@
             if (this.shape.IsPlaced) return;
             if (this.shape.TryCollect())
             {
-                GridUtils.AlignBlocksToCells(this.transform, this.shape.Blocks);
+                GridUtils.AlignBlocksToCells(this.transform, this.shape.Blocks.Where(bl => !bl.IsComplete).ToList());
             }
             else
             {

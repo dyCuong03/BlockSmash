@@ -3,14 +3,22 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using BlockSmash.Extensions;
     using BlockSmash.Models;
+    using BlockSmash.Signals;
+    using MessagePipe;
     using UnityEngine;
+    using VContainer;
     using VContainer.Unity;
     using Random = UnityEngine.Random;
 
     public class ShapeService : IInitializable
     {
         private readonly TextAsset jsonFile;
+        
+        private ISubscriber<ShapePlacedSignal> shapePlacedSubscriber;
+        private ISubscriber<ShapePlacedSignal> ShapePlacedSubscriber => this.shapePlacedSubscriber ??= this.GetCurrentContainer().Resolve<ISubscriber<ShapePlacedSignal>>();
+
         public ShapeService(TextAsset jsonFile)
         {
             this.jsonFile = jsonFile;
@@ -28,7 +36,14 @@
                 Debug.LogError($"{nameof(this.jsonFile)} is null");
                 return;
             }
-            this.shapeCollection = JsonUtility.FromJson<ShapeCollection>(this.jsonFile.text);;
+            this.shapeCollection = JsonUtility.FromJson<ShapeCollection>(this.jsonFile.text);
+
+            this.ShapePlacedSubscriber.Subscribe(this.OnShapePlacedAction);
+        }
+
+        private void OnShapePlacedAction(ShapePlacedSignal shapePlacedSignal)
+        {
+            this.currentShapes.Remove(shapePlacedSignal.shapeModel);
         }
 
         public ShapeModel GetShapeModel()
@@ -65,5 +80,9 @@
             return model;
         }
 
+        public void OnReplay()
+        {
+            this.currentShapes.Clear();
+        }
     }
 }

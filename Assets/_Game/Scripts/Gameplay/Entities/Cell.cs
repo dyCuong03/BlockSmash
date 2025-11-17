@@ -21,5 +21,10 @@
         {
             this.cell = data;
         }
+
+        protected override void OnRecycled()
+        {
+            base.OnRecycled();
+        }
     }
 }
