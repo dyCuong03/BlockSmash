@@ -22,11 +22,13 @@
         {
             if (this.shape.IsPlaced) return;
             this.transform.position = Vector3.Lerp(this.transform.position, mousePosition + this.dragOffset, Time.deltaTime * this.moveSpeed);
+            this.shape.SetBlockState(ShapeState.Drag);
         }
 
         public void OnEndDrag()
         {
             if (this.shape.IsPlaced) return;
+            this.shape.SetBlockState(ShapeState.Normal);
             if (this.shape.TryCollect())
             {
                 GridUtils.AlignBlocksToCells(this.transform, this.shape.Blocks.Where(bl => !bl.IsComplete).ToList());

@@ -11,6 +11,14 @@
     using UnityEngine;
     using VContainer;
 
+    public enum ShapeState
+    {
+        Collectable,
+        NonCollectable,
+        Drag,
+        Normal
+    }
+
     [RequireComponent(typeof(Rigidbody2D))]
     public class Shape : Entities
     {
@@ -94,6 +102,14 @@
             {
                 Destroy(col2d);
             }
+        }
+
+        public void SetBlockState(ShapeState state)
+        {
+            this.Blocks.ForEach(block =>
+            {
+                block.SetStateVisual(state);
+            });
         }
 
         public void RemoveBlocksInPositions(HashSet<Vector2Int> removedPositions)

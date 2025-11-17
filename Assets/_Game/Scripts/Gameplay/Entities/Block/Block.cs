@@ -1,5 +1,6 @@
 ﻿namespace BlockSmash.Entities
 {
+    using System;
     using System.Collections.Generic;
     using BlockSmash.Models;
     using UnityEngine;
@@ -8,6 +9,11 @@
     {
         [SerializeField] private SpriteRenderer blockView;
         [SerializeField] private List<Sprite> sprites;
+        
+        
+        [SerializeField] private GameObject shine;
+        [SerializeField] private GameObject brick;
+        
 
         private BlockModel block;
         private Shape shape;
@@ -25,6 +31,8 @@
             this.block = data;
             this.shape = shape;
             this.blockView.sprite = this.sprites[data.ColorId];
+            this.brick.gameObject.SetActive(false);
+            this.shine.gameObject.SetActive(false);
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -63,6 +71,52 @@
 
             return nearest;
         }
+
+        public void SetStateVisual(ShapeState state)
+        {
+            switch (state)
+            {
+                case ShapeState.Collectable:
+                    this.shine.gameObject.SetActive(true);
+                    this.brick.gameObject.SetActive(false);
+                    ResetBlockView();
+                    break;
+            
+                case ShapeState.NonCollectable:
+                    this.brick.gameObject.SetActive(true);
+                    this.shine.gameObject.SetActive(false);
+                    ResetBlockView();
+                    break;
+            
+                case ShapeState.Normal:
+                    this.brick.gameObject.SetActive(false);
+                    this.shine.gameObject.SetActive(false);
+                    ResetBlockView();
+                    break;
+            
+                case ShapeState.Drag:
+                    this.brick.gameObject.SetActive(false);
+                    this.shine.gameObject.SetActive(false);
+                    var col = this.blockView.color;
+                    col.a                       = 0.5f;  
+                    this.blockView.color        = col;
+                    this.blockView.sortingOrder = 2;
+                    break;
+            
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(state), state, null);
+            }
+            return;
+            void ResetBlockView()
+            {
+                var col = this.blockView.color;
+                col.a                       = 1f;
+                this.blockView.color        = col;
+                this.blockView.sortingOrder = 0;
+            }
+
+        }
+
 
         protected override void OnRecycled()
         {
