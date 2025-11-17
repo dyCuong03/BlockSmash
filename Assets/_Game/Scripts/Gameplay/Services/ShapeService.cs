@@ -59,22 +59,17 @@
             if (availableShapes.Count == 0)
                 throw new InvalidOperationException("All shapes are already used.");
 
-            var randomShapeIndex = Random.Range(0, availableShapes.Count);
-            var selectedShape    = availableShapes[randomShapeIndex];
-            
-            var allColors        = Enumerable.Range(0, COLOR_COUNT).ToList();
-
+            var allColors       = Enumerable.Range(0, COLOR_COUNT).ToList();
             var usedColors      = this.currentShapes.Select(s => s.ColorId).ToHashSet();
             var availableColors = allColors.Where(c => !usedColors.Contains(c)).ToList();
 
             if (availableColors.Count == 0)
-                throw new InvalidOperationException("No available ColorPreset left.");
+                throw new InvalidOperationException("No available colors left.");
 
-            var randomColorIndex = Random.Range(0, availableColors.Count);
-            var selectedColor    = availableColors[randomColorIndex];
+            var randomShape = availableShapes[Random.Range(0, availableShapes.Count)];
+            var randomColor = availableColors[Random.Range(0, availableColors.Count)];
 
-            var model = new ShapeModel(selectedShape, selectedColor);
-
+            var model = new ShapeModel(randomShape, randomColor);
             this.currentShapes.Add(model);
 
             return model;
