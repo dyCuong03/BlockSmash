@@ -78,15 +78,27 @@
 
         public bool TryCollect()
         {
-            if (!this.Blocks.All(block => block is { CanCollect: true })) return false;
-            {
-                if (!this.gameManager.TryPlace(this.Blocks.Select(block => block.CurrentCell.Position).ToList())) return false;
-                this.IsPlaced = true;
-                this.transform.SetParent(this.level.placedRoot);
-                this.shapePublisher.Publish(new(this.shapeModel));
-                return true;
-            }
+            if (!this.Blocks.All(block => block is { CanCollect: true })) 
+                return false;
+
+            var distinctCells = this.Blocks
+                .Select(b => b.CurrentCell)
+                .Where(c => c != null)
+                .Distinct()
+                .Count();
+
+            if (distinctCells != this.Blocks.Count) 
+                return false;
+
+            if (!this.gameManager.TryPlace(this.Blocks.Select(block => block.CurrentCell.Position).ToList())) 
+                return false;
+
+            this.IsPlaced = true;
+            this.transform.SetParent(this.level.placedRoot);
+            this.shapePublisher.Publish(new(this.shapeModel));
+            return true;
         }
+
 
         protected override void OnRecycled()
         {
